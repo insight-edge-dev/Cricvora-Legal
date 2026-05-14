@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cricvora — Play Store Submission Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ── Print styles ── */
+    @media print {
+      body { background: white; font-size: 11px; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+      .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+      header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .answer-yes, .answer-no { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+
+    /* ── Print button ── */
+    .print-btn {
+      position: fixed; top: 20px; right: 20px; z-index: 999;
+      background: #f59e0b; color: #000; border: none;
+      padding: 12px 24px; border-radius: 8px;
+      font-weight: 800; font-size: 13px; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(245,158,11,0.4);
+    }
+    .print-btn:hover { background: #d97706; }
+
+    /* ── Layout ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #020810 0%, #0a1e35 100%);
+      color: white; padding: 48px 40px; margin-bottom: 32px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .header-left h1 { font-size: 32px; font-weight: 900; color: #f59e0b; letter-spacing: -1px; margin-bottom: 4px; }
+    .header-left p  { color: #7e97b0; font-size: 14px; }
+    .header-right   { text-align: right; }
+    .header-right .version { background: rgba(245,158,11,0.2); border: 1px solid rgba(245,158,11,0.4); color: #f59e0b; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 8px; }
+    .header-right p { color: #4a6580; font-size: 12px; }
+
+    /* ── Section header ── */
+    .section-header {
+      background: linear-gradient(90deg, #020810, #0a1e35);
+      color: #f59e0b; font-weight: 800; font-size: 11px;
+      letter-spacing: 2px; padding: 10px 16px; border-radius: 8px;
+      margin: 32px 0 16px; text-transform: uppercase;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: white; border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      margin-bottom: 16px; overflow: hidden;
+    }
+    .card-header {
+      background: #f1f5f9; padding: 12px 20px;
+      font-weight: 700; font-size: 12px; color: #475569;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-body { padding: 20px; }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      background: #f8fafc; color: #64748b; font-weight: 700;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 10px 14px; text-align: left; border-bottom: 2px solid #e2e8f0;
+    }
+    td { padding: 11px 14px; border-bottom: 1px solid #f1f5f9; color: #334155; font-size: 12.5px; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    /* ── Badges ── */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .badge-green  { background: #dcfce7; color: #16a34a; }
+    .badge-red    { background: #fee2e2; color: #dc2626; }
+    .badge-amber  { background: #fef3c7; color: #d97706; }
+    .badge-blue   { background: #dbeafe; color: #2563eb; }
+    .badge-purple { background: #f3e8ff; color: #7c3aed; }
+    .badge-gray   { background: #f1f5f9; color: #64748b; }
+
+    .answer-yes { color: #16a34a; font-weight: 700; }
+    .answer-no  { color: #dc2626; font-weight: 700; }
+
+    /* ── Description box ── */
+    .desc-box {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+      padding: 16px 18px; font-size: 12.5px; line-height: 1.7; color: #334155;
+      white-space: pre-wrap; font-family: 'Inter', sans-serif;
+    }
+    .char-count { text-align: right; font-size: 11px; color: #94a3b8; margin-top: 6px; }
+
+    /* ── Info rows ── */
+    .info-row { display: flex; padding: 10px 0; border-bottom: 1px solid #f1f5f9; gap: 16px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: #64748b; font-weight: 600; font-size: 12px; min-width: 200px; flex-shrink: 0; }
+    .info-value { color: #1e293b; font-size: 12.5px; word-break: break-all; }
+    .info-value a { color: #f59e0b; text-decoration: none; }
+
+    /* ── Tags ── */
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .tag { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+
+    /* ── Warning box ── */
+    .warning { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; display: flex; gap: 10px; }
+    .warning-icon { font-size: 16px; flex-shrink: 0; }
+    .warning p  { color: #92400e; font-size: 12px; line-height: 1.5; }
+    .warning strong { font-weight: 700; }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 12.5px; color: #334155;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .check-done   { color: #16a34a; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .check-todo   { color: #94a3b8; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .check-warn   { color: #d97706; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Step boxes ── */
+    .steps { counter-reset: step; }
+    .step {
+      display: flex; gap: 16px; margin-bottom: 14px;
+      background: white; border-radius: 10px; padding: 14px 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      background: #020810; color: #f59e0b;
+      font-weight: 900; font-size: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-content h4 { font-weight: 700; color: #1e293b; margin-bottom: 3px; font-size: 13px; }
+    .step-content p  { color: #64748b; font-size: 12px; line-height: 1.5; }
+
+    /* ── Footer ── */
+    footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 0; border-top: 1px solid #e2e8f0; margin-top: 40px; }
+
+    /* ── Divider ── */
+    hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
+
+    .highlight { background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+    .mono { font-family: 'Courier New', monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 11px; color: #dc2626; }
+  </style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">⬇ Save as PDF</button>
+
+<div class="container">
+
+  <!-- ── Header ── -->
+  <header>
+    <div class="header-left">
+      <h1>🏏 Cricvora</h1>
+      <p>Google Play Store — Complete Submission Guide</p>
+    </div>
+    <div class="header-right">
+      <div class="version">Version 1.0.0</div>
+      <p>Package: com.insideedge.cricvora</p>
+      <p>Prepared: May 2026</p>
+    </div>
+  </header>
+
+  <!-- ── Important Warnings ── -->
+  <div class="warning">
+    <div class="warning-icon">⚠️</div>
+    <p><strong>Before submitting:</strong> Make sure contact@cricvora.com is set up and receiving emails. Google's reviewer may send test emails. Also have a working Indian SIM ready as a test account for the reviewer to log in with OTP.</p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header">1 · App Information</div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="info-row"><span class="info-label">App Name</span><span class="info-value"><strong>Cricvora - Live Cricket Scores</strong></span></div>
+      <div class="info-row"><span class="info-label">Package Name</span><span class="info-value"><span class="mono">com.insideedge.cricvora</span></span></div>
+      <div class="info-row"><span class="info-label">Version</span><span class="info-value">1.0.0 (Build 1)</span></div>
+      <div class="info-row"><span class="info-label">Category</span><span class="info-value">Sports</span></div>
+      <div class="info-row"><span class="info-label">Content Rating</span><span class="info-value"><span class="badge badge-green">Everyone / PEGI 3</span></span></div>
+      <div class="info-row"><span class="info-label">Price</span><span class="info-value">Free</span></div>
+      <div class="info-row"><span class="info-label">In-App Purchases</span><span class="info-value">No</span></div>
+      <div class="info-row"><span class="info-label">Ads</span><span class="info-value">No</span></div>
+      <div class="info-row"><span class="info-label">Target Age</span><span class="info-value">13+</span></div>
+      <div class="info-row"><span class="info-label">Developer Name</span><span class="info-value">Inside Edge Dev</span></div>
+      <div class="info-row"><span class="info-label">Support Email</span><span class="info-value"><a href="mailto:contact@cricvora.com">contact@cricvora.com</a></span></div>
+      <div class="info-row"><span class="info-label">Privacy Policy URL</span><span class="info-value"><a href="https://insight-edge-dev.github.io/Cricvora-Legal/privacy-policy.html">https://insight-edge-dev.github.io/Cricvora-Legal/privacy-policy.html</a></span></div>
+      <div class="info-row"><span class="info-label">Terms of Service URL</span><span class="info-value"><a href="https://insight-edge-dev.github.io/Cricvora-Legal/terms-of-service.html">https://insight-edge-dev.github.io/Cricvora-Legal/terms-of-service.html</a></span></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header">2 · Store Listing Content</div>
+
+  <!-- App Title -->
+  <div class="card">
+    <div class="card-header">📝 App Title <span class="badge badge-gray" style="margin-left:auto">Max 30 chars</span></div>
+    <div class="card-body">
+      <div class="desc-box">Cricvora - Live Cricket Scores</div>
+      <div class="char-count">30 / 30 characters</div>
+    </div>
+  </div>
+
+  <!-- Short Description -->
+  <div class="card">
+    <div class="card-header">📝 Short Description <span class="badge badge-gray" style="margin-left:auto">Max 80 chars</span></div>
+    <div class="card-body">
+      <div class="desc-box">Live scores, AI predictions & expert tips for every cricket fan.</div>
+      <div class="char-count">64 / 80 characters</div>
+    </div>
+  </div>
+
+  <!-- Full Description -->
+  <div class="card">
+    <div class="card-header">📝 Full Description <span class="badge badge-gray" style="margin-left:auto">Max 4000 chars</span></div>
+    <div class="card-body">
+      <div class="desc-box">🏏 Cricvora — Your Ultimate Cricket Companion
+
+Follow every ball. Predict every match. Never miss a moment.
+
+Cricvora brings you real-time cricket intelligence — live scores, AI-powered match predictions, expert analysis, and deep match insights for IPL and all major T20 leagues.
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚡ LIVE SCORES & UPDATES
+━━━━━━━━━━━━━━━━━━━━━━
+• Ball-by-ball live scores with instant updates
+• Live batting & bowling scorecards with player photos
+• Current run rate, required run rate & win probability
+• Pulsing live indicator so you never miss action
+
+━━━━━━━━━━━━━━━━━━━━━━
+🤖 AI MATCH PREDICTIONS
+━━━━━━━━━━━━━━━━━━━━━━
+• AI-powered win probability for every upcoming match
+• Confidence ratings: HIGH / MEDIUM / LOW
+• Based on head-to-head records, venue stats & current form
+• Updated as team news and conditions change
+
+━━━━━━━━━━━━━━━━━━━━━━
+🎯 EXPERT PREDICTIONS
+━━━━━━━━━━━━━━━━━━━━━━
+• Hand-picked predictions from cricket analysts
+• Detailed match analysis and reasoning
+• Updated before every major match
+
+━━━━━━━━━━━━━━━━━━━━━━
+📊 DEEP MATCH STATS
+━━━━━━━━━━━━━━━━━━━━━━
+• Full batting & bowling scorecards with player images
+• Fall of wickets, extras, and innings summary
+• Squad details for every team
+• Complete season fixtures and results
+
+━━━━━━━━━━━━━━━━━━━━━━
+🏆 STANDINGS & RANKINGS
+━━━━━━━━━━━━━━━━━━━━━━
+• Live points table with NRR
+• Season leaderboards — Orange Cap, Purple Cap & Top Sixes
+• Team form tracker (last 5 matches)
+• ICC T20 international rankings
+
+━━━━━━━━━━━━━━━━━━━━━━
+📰 CRICKET NEWS
+━━━━━━━━━━━━━━━━━━━━━━
+• Latest cricket news and match previews
+• Post-match reports and player news
+• Updated throughout the day
+
+━━━━━━━━━━━━━━━━━━━━━━
+🔔 SMART NOTIFICATIONS
+━━━━━━━━━━━━━━━━━━━━━━
+• Match start alerts for your favourite teams
+• Expert prediction notifications before big matches
+• Never miss an important update
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚙️ PERSONALISED FOR YOU
+━━━━━━━━━━━━━━━━━━━━━━
+• Pick your favourite IPL teams
+• Support for IPL, PSL, BBL, T20 World Cup & more
+• Clean dark theme — easy on the eyes during night matches
+• Lightweight & fast — loads in seconds
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+📌 IMPORTANT DISCLAIMER
+Cricvora provides data-driven statistical analysis for entertainment purposes only. Match predictions are not gambling advice, betting tips, or financial recommendations. Cricvora is not a betting or fantasy sports platform.
+
+Data powered by Sportsmonks Cricket API.
+
+Questions? Contact us at contact@cricvora.com</div>
+      <div class="char-count">≈ 1,820 / 4,000 characters</div>
+    </div>
+  </div>
+
+  <!-- Keywords -->
+  <div class="card">
+    <div class="card-header">🏷️ Keywords (weave into description for search ranking)</div>
+    <div class="card-body">
+      <div class="tags">
+        <span class="tag">ipl 2026</span>
+        <span class="tag">cricket live score</span>
+        <span class="tag">t20 cricket</span>
+        <span class="tag">match prediction</span>
+        <span class="tag">ipl score today</span>
+        <span class="tag">cricket scorecard</span>
+        <span class="tag">ipl points table</span>
+        <span class="tag">cricket companion</span>
+        <span class="tag">live cricket</span>
+        <span class="tag">ipl live</span>
+        <span class="tag">cricket app india</span>
+        <span class="tag">ipl schedule</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Release Notes -->
+  <div class="card">
+    <div class="card-header">📋 Release Notes — v1.0.0 (What's New)</div>
+    <div class="card-body">
+      <div class="desc-box">🏏 Welcome to Cricvora!
+
+Your all-in-one cricket companion is here. With Cricvora 1.0, you get:
+
+• Live ball-by-ball scores for IPL 2026 and all major T20 leagues
+• AI-powered match predictions with win probability
+• Expert predictions and match analysis
+• Full scorecards with player photos
+• Season leaderboards — Orange Cap, Purple Cap, Top Sixes
+• Team standings and ICC T20 rankings
+• Latest cricket news
+
+More features coming soon. Feedback? contact@cricvora.com</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header page-break">3 · Store Listing Assets Checklist</div>
+
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Asset</th>
+          <th>Size / Format</th>
+          <th>Notes</th>
+          <th>Status</th>
+        </tr>
+        <tr>
+          <td><strong>App Icon</strong></td>
+          <td>512 × 512 PNG</td>
+          <td>No transparency, no rounded corners</td>
+          <td><span class="badge badge-amber">Upload to Play Console</span></td>
+        </tr>
+        <tr>
+          <td><strong>Feature Graphic</strong></td>
+          <td>1024 × 500 PNG/JPG</td>
+          <td>No transparency. Keep key elements within 10% safe zone from edges.</td>
+          <td><span class="badge badge-green">Created</span></td>
+        </tr>
+        <tr>
+          <td><strong>Phone Screenshots</strong></td>
+          <td>Min 2, max 8<br>1080×1920 or 1080×2340</td>
+          <td>Take from real device. Recommended screens: Home, Scorecard, Predictions, Standings, Login, Notifications, Profile, Expert Picks</td>
+          <td><span class="badge badge-amber">Take 8 screenshots</span></td>
+        </tr>
+        <tr>
+          <td><strong>App icon (in-app)</strong></td>
+          <td>1024 × 1024 PNG</td>
+          <td>Used for iOS + Android fallback. No transparency.</td>
+          <td><span class="badge badge-green">In assets folder</span></td>
+        </tr>
+        <tr>
+          <td><strong>Adaptive Icon Foreground</strong></td>
+          <td>1024 × 1024 PNG</td>
+          <td>Transparent bg. Element in center 60% only.</td>
+          <td><span class="badge badge-green">In assets folder</span></td>
+        </tr>
+        <tr>
+          <td><strong>Adaptive Icon Background</strong></td>
+          <td>1024 × 1024 PNG</td>
+          <td>Solid color #020617. No foreground elements.</td>
+          <td><span class="badge badge-green">In assets folder</span></td>
+        </tr>
+        <tr>
+          <td><strong>Monochrome Icon</strong></td>
+          <td>1024 × 1024 PNG</td>
+          <td>White on transparent. For Android 13 themed icons.</td>
+          <td><span class="badge badge-green">In assets folder</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header">4 · Content Rating Questionnaire</div>
+
+  <div class="warning">
+    <div class="warning-icon">ℹ️</div>
+    <p><strong>Navigate to:</strong> Play Console → App Content → Ratings → Start questionnaire → Select category: <strong>Utility</strong> or <strong>Sports</strong></p>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th>Question</th><th>Answer</th><th>Reason</th></tr>
+        <tr>
+          <td>Does the app contain violence?</td>
+          <td><span class="answer-no">No</span></td>
+          <td>Cricket sports app, no violent content</td>
+        </tr>
+        <tr>
+          <td>Does the app contain sexual content?</td>
+          <td><span class="answer-no">No</span></td>
+          <td>No sexual content whatsoever</td>
+        </tr>
+        <tr>
+          <td>Does the app contain profanity or crude humour?</td>
+          <td><span class="answer-no">No</span></td>
+          <td>No profanity in any content</td>
+        </tr>
+        <tr>
+          <td>Does the app contain references to drugs, alcohol or tobacco?</td>
+          <td><span class="answer-no">No</span></td>
+          <td>No references to controlled substances</td>
+        </tr>
+        <tr>
+          <td>Does the app simulate gambling?</td>
+          <td><span class="answer-no">No</span></td>
+          <td>Predictions are statistical analysis only. No wagering, no virtual currency, no casino mechanics.</td>
+        </tr>
+        <tr>
+          <td>Does the app allow users to interact with each other?</td>
+          <td><span class="answer-no">No</span></td>
+          <td>No chat, comments, or social features</td>
+        </tr>
+        <tr>
+          <td>Does the app share user location?</td>
+          <td><span class="answer-no">No</span></td>
+          <td>No location access or sharing</td>
+        </tr>
+        <tr>
+          <td>Is the app primarily targeted at children?</td>
+          <td><span class="answer-no">No</span></td>
+          <td>Target audience is cricket fans 13+</td>
+        </tr>
+        <tr style="background:#f0fdf4">
+          <td><strong>Expected Rating</strong></td>
+          <td colspan="2"><span class="badge badge-green">Everyone (PEGI 3) — suitable for all ages</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header page-break">5 · Data Safety Form</div>
+
+  <div class="warning">
+    <div class="warning-icon">ℹ️</div>
+    <p><strong>Navigate to:</strong> Play Console → App Content → Data Safety → Start</p>
+  </div>
+
+  <!-- Section 5.1 -->
+  <div class="card">
+    <div class="card-header">5.1 · Top-Level Questions</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Question</th><th>Answer</th></tr>
+        <tr>
+          <td>Does your app collect or share any of the required user data types?</td>
+          <td><span class="answer-yes">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Is all of the user data collected by your app encrypted in transit?</td>
+          <td><span class="answer-yes">Yes</span> — all data is transmitted over HTTPS/TLS 1.2+</td>
+        </tr>
+        <tr>
+          <td>Do you provide a way for users to request that their data is deleted?</td>
+          <td><span class="answer-yes">Yes</span> — in-app button in Profile screen + email option</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section 5.2 -->
+  <div class="card">
+    <div class="card-header">5.2 · Data Types Collected</div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Data Type</th>
+          <th>Collected?</th>
+          <th>Shared?</th>
+          <th>Purpose</th>
+          <th>Required?</th>
+          <th>Processed Ephemerally?</th>
+        </tr>
+        <tr>
+          <td><strong>Phone Number</strong></td>
+          <td><span class="answer-yes">Yes</span></td>
+          <td>SMS provider only (OTP delivery)</td>
+          <td>Authentication</td>
+          <td>Yes — cannot use app without it</td>
+          <td>No — stored in database</td>
+        </tr>
+        <tr>
+          <td><strong>Name (Display Name)</strong></td>
+          <td><span class="answer-yes">Yes</span></td>
+          <td><span class="answer-no">No</span></td>
+          <td>App personalisation</td>
+          <td>No — optional after signup</td>
+          <td>No — stored in database</td>
+        </tr>
+        <tr>
+          <td><strong>Other User Content (Favourite Teams)</strong></td>
+          <td><span class="answer-yes">Yes</span></td>
+          <td><span class="answer-no">No</span></td>
+          <td>App personalisation</td>
+          <td>No — optional, user-chosen</td>
+          <td>No — stored in database</td>
+        </tr>
+        <tr>
+          <td><strong>Email Address</strong></td>
+          <td><span class="answer-no">No</span></td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Location (precise or approximate)</strong></td>
+          <td><span class="answer-no">No</span></td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Device or Other IDs</strong></td>
+          <td><span class="answer-no">No</span></td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Crash Logs / Analytics</strong></td>
+          <td><span class="answer-no">No</span></td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Payment Info</strong></td>
+          <td><span class="answer-no">No</span></td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section 5.3 -->
+  <div class="card">
+    <div class="card-header">5.3 · Data Sharing — Third Parties</div>
+    <div class="card-body">
+      <table>
+        <tr><th>Third Party</th><th>Data Shared</th><th>Purpose</th><th>Is Sharing Optional?</th></tr>
+        <tr>
+          <td><strong>JSK Bulk Marketing</strong><br><small style="color:#64748b">jskbulkmarketing.in</small></td>
+          <td>Phone number</td>
+          <td>OTP SMS delivery for login authentication</td>
+          <td>No — required for login</td>
+        </tr>
+        <tr>
+          <td><strong>Supabase</strong></td>
+          <td>Phone number, display name, favourite teams, token hashes</td>
+          <td>Database storage for the app (SOC 2 Type II, AWS)</td>
+          <td>No — core infrastructure</td>
+        </tr>
+        <tr>
+          <td><strong>Sportsmonks</strong></td>
+          <td>None</td>
+          <td>Cricket data (match scores, fixtures, stats) — no user data sent</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Cricbuzz / RapidAPI</strong></td>
+          <td>None</td>
+          <td>Cricket news content — no user data sent</td>
+          <td>—</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header page-break">6 · App Access (Test Account for Reviewer)</div>
+
+  <div class="warning">
+    <div class="warning-icon">⚠️</div>
+    <p><strong>Critical:</strong> Google's reviewer must be able to log in. You must provide a working Indian phone number that can receive OTP during the review period (usually within 7 days of submission). Keep this SIM active and ready.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header">6.1 · App Access Instructions</div>
+    <div class="card-body">
+      <div style="margin-bottom:12px">
+        <div class="info-row"><span class="info-label">Access Type</span><span class="info-value">All or most functionality is restricted (requires login)</span></div>
+        <div class="info-row"><span class="info-label">Test Phone Number</span><span class="info-value"><span class="highlight">Enter your spare Indian mobile number here before submitting</span></span></div>
+        <div class="info-row"><span class="info-label">Login Steps</span><span class="info-value">Enter the phone number → Tap "Get OTP" → Enter the 6-digit OTP received via SMS → App opens to home screen</span></div>
+        <div class="info-row"><span class="info-label">OTP Validity</span><span class="info-value">10 minutes. If expired, tap "Resend OTP".</span></div>
+      </div>
+
+      <div style="background:#f8fafc; border-radius:8px; padding:14px 16px; border: 1px solid #e2e8f0;">
+        <p style="font-weight:700; margin-bottom:8px; color:#334155;">Instructions to paste in Play Console:</p>
+        <div class="desc-box" style="font-size:11.5px">This app requires phone number authentication via OTP (one-time password).
+
+Login steps:
+1. Enter the test phone number provided
+2. Tap "Get OTP" — an SMS will be delivered within 30 seconds
+3. Enter the 6-digit OTP from the SMS
+4. App opens to the Home screen with live cricket content
+
+Note: OTP is valid for 10 minutes. All app features are accessible after login — no additional purchase or subscription required.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header">7 · Permissions Declared in App</div>
+
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th>Permission</th><th>Why It's There</th><th>User-Visible?</th></tr>
+        <tr>
+          <td><strong>INTERNET</strong></td>
+          <td>All app functionality requires internet — live scores, auth, news</td>
+          <td>No (automatic)</td>
+        </tr>
+        <tr>
+          <td><strong>ACCESS_NETWORK_STATE</strong></td>
+          <td>Offline detection for the "No internet" banner (NetInfo)</td>
+          <td>No (automatic)</td>
+        </tr>
+        <tr>
+          <td><strong>VIBRATE</strong></td>
+          <td>Haptic feedback on button presses (expo-haptics)</td>
+          <td>No (automatic)</td>
+        </tr>
+        <tr>
+          <td><strong>USE_BIOMETRIC / USE_FINGERPRINT</strong></td>
+          <td>expo-secure-store uses encrypted storage (may add these)</td>
+          <td>No</td>
+        </tr>
+        <tr style="background:#f0fdf4">
+          <td colspan="3"><strong>NOT requested:</strong> Camera, Microphone, Location, Contacts, Storage, Notifications, Phone State, Calendar — clean permissions profile.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header page-break">8 · Play Console Setup — Step by Step</div>
+
+  <div class="card">
+    <div class="card-header">Step-by-Step Submission Order</div>
+    <div class="card-body">
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Create Google Play Developer Account</h4>
+            <p>Go to play.google.com/console → Pay $25 one-time fee → Complete identity verification (may require government ID) → Wait 1-3 days for approval.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Create New App</h4>
+            <p>Dashboard → Create app → Name: "Cricvora" → Default language: English (India) → App or game: App → Free → Accept declarations → Create app.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Complete App Content Section (Policy menu)</h4>
+            <p>Privacy Policy URL → Ads: No → App Access: Restricted (add test account) → Content Rating: Start questionnaire → Data Safety: Fill form → Target Audience: 13+ → News App: No</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Fill Store Listing</h4>
+            <p>Title, short description, full description (copy from Section 2) → Upload feature graphic, icon, screenshots → Category: Sports → Contact email → Privacy policy URL.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>Set Up Production Release</h4>
+            <p>Production → Create new release → Upload .aab file → Release name: 1.0.0 → Release notes (copy from Section 2) → Review release.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <h4>Submit for Review</h4>
+            <p>Resolve all warnings shown by Play Console → Start rollout to production → Wait 7-14 days for first submission review.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header">9 · Pre-Submission Final Checklist</div>
+
+  <div class="card">
+    <div class="card-body">
+      <ul class="checklist">
+        <li><span class="check-done">✅</span><div><strong>Package name set to com.insideedge.cricvora</strong> — permanent, cannot be changed after first publish</div></li>
+        <li><span class="check-done">✅</span><div><strong>Supabase anon key</strong> (not service role key) in eas.json and .env</div></li>
+        <li><span class="check-done">✅</span><div><strong>usesCleartextTraffic removed</strong> from app.json — backend is HTTPS only</div></li>
+        <li><span class="check-done">✅</span><div><strong>Delete Account</strong> in-app button in Profile screen (Google Play mandatory)</div></li>
+        <li><span class="check-done">✅</span><div><strong>Privacy Policy</strong> hosted and accessible without login at GitHub Pages URL</div></li>
+        <li><span class="check-done">✅</span><div><strong>Terms of Service</strong> hosted at GitHub Pages URL</div></li>
+        <li><span class="check-done">✅</span><div><strong>Login screen links</strong> (Terms + Privacy) are tappable and open real hosted pages</div></li>
+        <li><span class="check-done">✅</span><div><strong>Support email</strong> updated to contact@cricvora.com throughout app</div></li>
+        <li><span class="check-done">✅</span><div><strong>Privacy screen text</strong> — phone number (not email) correctly described</div></li>
+        <li><span class="check-warn">⚠️</span><div><strong>contact@cricvora.com</strong> must be set up and receiving email before submission</div></li>
+        <li><span class="check-todo">○</span><div><strong>Production AAB</strong> — run: <span class="mono">eas build --platform android --profile production</span></div></li>
+        <li><span class="check-todo">○</span><div><strong>8 screenshots</strong> taken from real device (1080×1920 or 1080×2340)</div></li>
+        <li><span class="check-todo">○</span><div><strong>Feature graphic</strong> uploaded (1024×500 PNG)</div></li>
+        <li><span class="check-todo">○</span><div><strong>Test phone number</strong> ready for reviewer (working Indian SIM, available for 14 days)</div></li>
+        <li><span class="check-todo">○</span><div><strong>Play Console developer account</strong> created and verified ($25 fee paid)</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header">10 · Common Rejection Reasons to Avoid</div>
+
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th>Rejection Reason</th><th>Our Status</th></tr>
+        <tr>
+          <td>No in-app account deletion option</td>
+          <td><span class="badge badge-green">Fixed — Delete Account in Profile screen</span></td>
+        </tr>
+        <tr>
+          <td>Privacy Policy URL broken or requires login</td>
+          <td><span class="badge badge-green">Fixed — hosted on GitHub Pages (public)</span></td>
+        </tr>
+        <tr>
+          <td>Test account OTP not received by reviewer</td>
+          <td><span class="badge badge-amber">Keep test SIM active during review period</span></td>
+        </tr>
+        <tr>
+          <td>Login screen legal links non-functional</td>
+          <td><span class="badge badge-green">Fixed — both links open hosted pages</span></td>
+        </tr>
+        <tr>
+          <td>Description implies gambling or betting</td>
+          <td><span class="badge badge-green">Disclaimer added — "not gambling advice"</span></td>
+        </tr>
+        <tr>
+          <td>App crashes on reviewer's device</td>
+          <td><span class="badge badge-amber">Test on mid-range Android (Samsung A-series) before submitting</span></td>
+        </tr>
+        <tr>
+          <td>Data Safety form inaccurate</td>
+          <td><span class="badge badge-amber">Follow Section 5 answers exactly</span></td>
+        </tr>
+        <tr>
+          <td>Privacy Policy mentions wrong data (e.g. email instead of phone)</td>
+          <td><span class="badge badge-green">Fixed — correctly says phone number</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="section-header">11 · Post-Submission Timeline</div>
+
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr><th>Event</th><th>Expected Timeline</th></tr>
+        <tr><td>First submission review (new account)</td><td>7–14 days</td></tr>
+        <tr><td>App appears on Play Store after approval</td><td>3–4 hours after approval</td></tr>
+        <tr><td>Subsequent update reviews</td><td>1–3 days</td></tr>
+        <tr><td>If rejected — fix and resubmit</td><td>3–7 days for re-review</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <p>🏏 Cricvora — Play Store Submission Guide · Inside Edge Dev · contact@cricvora.com</p>
+    <p style="margin-top:6px">Generated May 2026 · This document is confidential and for internal use only.</p>
+  </footer>
+
+</div>
+</body>
+</html>
